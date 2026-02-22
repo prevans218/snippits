@@ -1,0 +1,66 @@
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv("/content/sealiondata (7).csv")
+
+
+# Removing spaces at beginning and end of columns, changing to lowercase, and replacing spaces with _
+print(df.columns.tolist())
+
+print("Clean me, please")
+
+df.columns = df.columns.str.strip().str.lower().str.replace(" ","_")
+print(df.columns.tolist())
+
+
+# Categorical typos / Fuzzy Logic
+print(df['channel'].unique())
+
+cleanup_map = {
+    'Tik_Tok' : 'TikTok',
+    'Gogle' : 'Google',
+    'Facebok' : 'Facebook',
+    'Insta_gram' : 'Instagram',
+    'E-mail' : 'Email',
+    'N/A' : np.nan
+}
+
+df['channel'] = df['channel'].replace(cleanup_map)
+print("Clean me up thank youuuu")
+print(df['channel'].unique())
+
+
+# Type conversion or Currency cleaning
+dirty_spend_mask = df['spend'].astype('str').str.contains(r'[^\d\.]')
+print(df.loc[dirty_spend_mask, ['campaign_id', 'spend']].head(3))
+
+df['spend'] = df['spend'].astype(str).str.replace(r'[^\d\.]', '', regex=True)
+df['spend'] = pd.to_numeric(df['spend'])
+
+
+# Cleaning booleans
+print(df['active'].unique())
+
+bool_map = {
+    'Y' : True,
+    '1' : True,
+    'Yes' : True,
+    1 : True,
+    '0' : False,
+    'No' : False,
+    0 : False
+}
+
+df['active'] = df['active'].map(bool_map).fillna(False).astype(bool)
+print("Clean me thanks bub")
+print(df['active'].unique())
+
+
+# Changing datetime
+print(df['start_date'].dtype)
+
+df['start_date'] = pd.to_datetime(df['start_date'], errors='coerce')
+df['end_date'] = pd.to_datetime(df['end_date'], errors='coerce')
+
+print("Fix me thanks")
+print(df['start_date'].dtype)
