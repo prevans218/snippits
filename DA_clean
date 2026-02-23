@@ -1,0 +1,25 @@
+import pandas as pd
+
+df  = pd.read_csv(r/
+
+
+# dropping duplicates
+df.drop_duplicates()
+
+
+#dropping columns
+df = df.drop(columns = "name_of_column")
+
+
+# insane phone numbers
+df["phone_number"].str.replace('[^a-zA=Z0-9]','')    # dropping everyting that isn't a number
+
+df["phone_number"].apply(lambda x: x[0:3] + '-' + x[3:6] + '-' + x[6:10])    # all values must be strings. If there are floats  use the below code
+
+df["phone_number"].apply(lambda x: str(x))  # If floats or null values, should now show "nan--" or "Na--"
+
+df["phone_number"].str.replace('nan--','') # replacing 
+df["phone_number"].str.replace('Na--','')
+
+# creating new columns for full addresses by splitting an existing column that includes address, state, and zip code in the values
+df[["street_address", "state", "zip_code"]] = df["Address"].str.split(',',2, expand=True)
